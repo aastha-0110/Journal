@@ -1,20 +1,36 @@
+import type { Metadata } from 'next';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import './globals.css';
+import { ThemeProvider } from '@/components/theme/theme-provider';
+import { UserProvider } from '@/components/providers/user-provider';
 
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import './globals.css'  // in layout.tsx
+export const metadata: Metadata = {
+  title: 'Personal Journal - Your Daily Companion',
+  description: 'Track your mood, write journal entries, and manage your daily tasks',
+};
 
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        <NextThemesProvider
-          attribute="class"          // use `class` on <html> for theme switching
-          defaultTheme="system"      // default to system theme if no saved preference
-          enableSystem={true}        // enable system preference detection
-          disableTransitionOnChange  // disables CSS transitions during theme toggle to reduce flicker
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          {children}
-        </NextThemesProvider>
+          <UserProvider>
+            {children}
+          </UserProvider>
+        </ThemeProvider>
       </body>
-    </html>  );
+    </html>
+  );
 }
