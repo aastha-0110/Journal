@@ -26,9 +26,15 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         .then((data) => {
           if (data.success) {
             setUser(data.data);
+          } else {
+            // User not found, clear localStorage
+            localStorage.removeItem('userId');
           }
         })
-        .catch((error) => console.error('Error fetching user:', error))
+        .catch((error) => {
+          console.error('Error fetching user:', error);
+          localStorage.removeItem('userId');
+        })
         .finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);

@@ -47,15 +47,22 @@ export function EntryList({ onEdit, refreshTrigger }: EntryListProps) {
     if (!confirm('Delete this entry?')) return;
 
     try {
+      console.log('Deleting entry:', id); // Debug
       const res = await fetch(`/api/entries/${id}`, {
         method: 'DELETE',
       });
 
-      if (res.ok) {
+      const data = await res.json();
+      console.log('Delete response:', data); // Debug
+
+      if (data.success) {
         setEntries(entries.filter(e => e._id !== id));
+      } else {
+        alert('Failed to delete: ' + data.error);
       }
     } catch (error) {
       console.error('Error deleting entry:', error);
+      alert('Failed to delete entry');
     }
   };
 
@@ -92,7 +99,7 @@ export function EntryList({ onEdit, refreshTrigger }: EntryListProps) {
                   </div>
                   <CardTitle className="line-clamp-1">{entry.title}</CardTitle>
                   <CardDescription>
-                    {format(new Date(entry.date), 'MMM d, yyyy')}
+                    {entry.date ? format(new Date(entry.date), 'MMM d, yyyy') : 'No date'}
                   </CardDescription>
                 </div>
               </div>

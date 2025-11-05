@@ -2,67 +2,85 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '../../../../models/Users';
 
-// GET user by ID
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+// GET all users (for admin/debugging - can remove in production)
+export async function GET() {
   try {
-    const { id } = await context.params;
     await dbConnect();
-    const user = await User.findById(id);
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
-    }
-
+    const users = await User.find({}).select('username email createdAt');
+    
     return NextResponse.json({
       success: true,
-      data: user,
+      data: users,
     });
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error('Error fetching users:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch user' },
+      { success: false, error: 'Failed to fetch users' },
       { status: 500 }
     );
   }
 }
 
-// PATCH update user (for theme preferences)
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+// POST create new user (Signup)
+export async function POST(request: NextRequest) {
   try {
-    const { id } = await context.params;
     await dbConnect();
     const body = await request.json();
+    const { username, password, email } = body;
 
-    const user = await User.findByIdAndUpdate(
-      id,
-      { $set: body },
-      { new: true, runValidators: true }
-    );
-
-    if (!user) {
+    // Validation
+    if (!username || username.trim().length < 3) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
+        { success: false, error: 'Username must be at least 3 characters' },
+        { status: 400 }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: user,
+    if (!password || password.length < 6) {
+      return NextResponse.json(
+        { success: false, error: 'Password must be at least 6 characters' },
+        { status: 400 }
+      );
+    }
+
+    // Check if username already exists
+    const existingUser = await User.findOne({ username: username.trim() });
+    if (existingUser) {
+      return NextResponse.json(
+        { success: false, error: 'Username already taken' },
+        { status: 409 }
+      );
+    }
+
+    // Create user (storing password as plain text for simplicity - NOT PRODUCTION READY)
+    // In production, use bcrypt to hash passwords
+    const user = await User.create({
+      username: username.trim(),
+      password: password, // TODO: Hash this with bcrypt in production
+      email: email?.trim() || undefined,
     });
-  } catch (error) {
-    console.error('Error updating user:', error);
+
+    // Return user without password
+    const userWithoutPassword = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      themePreference: user.themePreference,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
     return NextResponse.json(
-      { success: false, error: 'Failed to update user' },
+      {
+        success: true,
+        data: userWithoutPassword,
+      },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    console.error('Error creating user:', error);
+    return NextResponse.json(
+      { success: false, error: error.message || 'Failed to create user' },
       { status: 500 }
     );
   }

@@ -5,11 +5,12 @@ import Entry from '../../../../../models/Entry';
 // GET single entry
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     await dbConnect();
-    const entry = await Entry.findById(params.id);
+    const entry = await Entry.findById(id);
 
     if (!entry) {
       return NextResponse.json(
@@ -23,6 +24,7 @@ export async function GET(
       data: entry,
     });
   } catch (error) {
+    console.error('Error fetching entry:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch entry' },
       { status: 500 }
@@ -33,14 +35,15 @@ export async function GET(
 // PATCH update entry
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     await dbConnect();
     const body = await request.json();
 
     const entry = await Entry.findByIdAndUpdate(
-      params.id,
+      id,
       { $set: body },
       { new: true, runValidators: true }
     );
@@ -57,6 +60,7 @@ export async function PATCH(
       data: entry,
     });
   } catch (error) {
+    console.error('Error updating entry:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update entry' },
       { status: 500 }
@@ -67,11 +71,12 @@ export async function PATCH(
 // DELETE entry
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     await dbConnect();
-    const entry = await Entry.findByIdAndDelete(params.id);
+    const entry = await Entry.findByIdAndDelete(id);
 
     if (!entry) {
       return NextResponse.json(
@@ -85,6 +90,7 @@ export async function DELETE(
       data: entry,
     });
   } catch (error) {
+    console.error('Error deleting entry:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to delete entry' },
       { status: 500 }

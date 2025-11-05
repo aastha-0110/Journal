@@ -1,97 +1,77 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Entry from '../../../../models/Entry';
-// GET single entry
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await context.params;
-    await dbConnect();
-    const entry = await Entry.findById(id);
 
-    if (!entry) {
+// GET all entries for a user
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
+
+    if (!userId) {
       return NextResponse.json(
-        { success: false, error: 'Entry not found' },
-        { status: 404 }
+        { success: false, error: 'User ID required' },
+        { status: 400 }
       );
     }
 
+    await dbConnect();
+    
+    console.log('Fetching entries for userId:', userId); // Debug
+    
+    const entries = await Entry.find({ userId })
+      .sort({ date: -1 })
+      .lean();
+
+    console.log('Found entries:', entries.length); // Debug
+
     return NextResponse.json({
       success: true,
-      data: entry,
+      data: entries,
     });
   } catch (error) {
-    console.error('Error fetching entry:', error);
+    console.error('Error fetching entries:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch entry' },
+      { success: false, error: 'Failed to fetch entries' },
       { status: 500 }
     );
   }
 }
 
-// PATCH update entry
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+// POST create new entry
+export async function POST(request: NextRequest) {
   try {
-    const { id } = await context.params;
     await dbConnect();
     const body = await request.json();
+    const { userId, title, content, mood, date, tags } = body;
 
-    const entry = await Entry.findByIdAndUpdate(
-      id,
-      { $set: body },
-      { new: true, runValidators: true }
-    );
-
-    if (!entry) {
+    if (!userId || !title || !content || !mood) {
       return NextResponse.json(
-        { success: false, error: 'Entry not found' },
-        { status: 404 }
+        { success: false, error: 'Missing required fields' },
+        { status: 400 }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: entry,
+    const entry = await Entry.create({
+      userId,
+      title,
+      content,
+      mood,
+      date: date || new Date(),
+      tags: tags || [],
     });
-  } catch (error) {
-    console.error('Error updating entry:', error);
+
     return NextResponse.json(
-      { success: false, error: 'Failed to update entry' },
-      { status: 500 }
+      {
+        success: true,
+        data: entry,
+      },
+      { status: 201 }
     );
-  }
-}
-
-// DELETE entry
-export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await context.params;
-    await dbConnect();
-    const entry = await Entry.findByIdAndDelete(id);
-
-    if (!entry) {
-      return NextResponse.json(
-        { success: false, error: 'Entry not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: entry,
-    });
-  } catch (error) {
-    console.error('Error deleting entry:', error);
+  } catch (error: any) {
+    console.error('Error creating entry:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete entry' },
+      { success: false, error: error.message || 'Failed to create entry' },
       { status: 500 }
     );
   }

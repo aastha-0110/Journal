@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '../../../../../models/Users';
-
 // GET user by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     await dbConnect();
-    const user = await User.findById(params.id);
+    const user = await User.findById(id);
 
     if (!user) {
       return NextResponse.json(
@@ -18,9 +18,19 @@ export async function GET(
       );
     }
 
+    // Return user without password
+    const userWithoutPassword = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      themePreference: user.themePreference,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
     return NextResponse.json({
       success: true,
-      data: user,
+      data: userWithoutPassword,
     });
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -34,14 +44,15 @@ export async function GET(
 // PATCH update user (for theme preferences)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     await dbConnect();
     const body = await request.json();
 
     const user = await User.findByIdAndUpdate(
-      params.id,
+      id,
       { $set: body },
       { new: true, runValidators: true }
     );
@@ -53,9 +64,19 @@ export async function PATCH(
       );
     }
 
+    // Return user without password
+    const userWithoutPassword = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      themePreference: user.themePreference,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
     return NextResponse.json({
       success: true,
-      data: user,
+      data: userWithoutPassword,
     });
   } catch (error) {
     console.error('Error updating user:', error);
