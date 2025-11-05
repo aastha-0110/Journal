@@ -45,9 +45,13 @@ A full-stack journaling app with mood tracking, todo lists, and customizable the
 # Brief Implementation Description
 
 -Implemented Light and Dark Mode using next-themes and persisted theme preference with localStorage.
+
 -Built with Next.js (MERN stack) — API Routes handle database interactions via Mongoose.
+
 -Supports user authentication, journal entries, mood tracking, and to-do lists.
+
 -Fully responsive and uses shadcn/ui components for a modern, consistent UI.
+
 -Deployed on Vercel with environment configuration for MongoDB Atlas.
 
 ##  Usage
