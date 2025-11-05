@@ -11,8 +11,10 @@ import { BookOpen, Plus, ArrowLeft } from 'lucide-react';
 import { JournalEntry } from '../../../types';
 import Link from 'next/link';
 
+
 export default function JournalPage() {
   const { user } = useUser();
+  
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
@@ -29,7 +31,18 @@ export default function JournalPage() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Please log in to view your journal</p>
+        <p className="text-lg sm:text-xl text-muted-foreground font-medium text-center">
+  Please{' '}
+  <Link 
+    href="/" 
+    className="text-primary font-semibold underline hover:text-primary/80 transition-colors"
+  >
+    log in
+  </Link>{' '}
+  to view your journal
+</p>
+
+       
       </div>
     );
   }

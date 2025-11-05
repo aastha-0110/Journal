@@ -149,7 +149,7 @@ export default function Home() {
           /* Logged-out hero with safe fallbacks */
           <section className="relative text-center py-16 md:py-24">
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4">
-              {/* Default readable text; upgrade to gradient only if supported */}
+              
               <span className="text-foreground supports-[background-clip:text]:bg-gradient-to-r supports-[background-clip:text]:from-primary supports-[background-clip:text]:to-primary/70 supports-[background-clip:text]:bg-clip-text supports-[background-clip:text]:text-transparent">
                 Journal. Plan. Reflect. Repeat.
               </span>
