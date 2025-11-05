@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Journal 📔
 
-## Getting Started
+A full-stack journaling app with mood tracking, todo lists, and customizable themes.
 
-First, run the development server:
+**Live Demo:** [https://journal-three-eta.vercel.app/](https://journal-three-eta.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠️ Technologies Used
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Frontend:** Next.js , TypeScript, shadcn/ui, Tailwind CSS , next-themes  
+**Backend:** Next.js API Routes, MongoDB, Mongoose  
+**Deployment:** Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+##  Setup Instructions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Clone and install**
+   ```bash
+   git clone https://github.com/aastha-0110/Journal.git
+   cd Journal
+   npm install
+   ```
 
-## Learn More
+2. **Configure environment variables**
+   
+   Create `.env.local`:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   NEXTAUTH_URL=http://localhost:3000
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Run development server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Authentication** - Secure login/signup system
+- **Journal Entries** - Create, edit, delete entries with mood tracking
+- **Todo Lists** - Task management with priority levels
+- **Light/Dark Mode** - Theme switching with localStorage persistence
+- **Responsive Design** - Works on all devices
+- **SSR** - Server-side rendering with Next.js
 
-## Deploy on Vercel
+# Brief Implementation Description
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-Implemented Light and Dark Mode using next-themes and persisted theme preference with localStorage.
+-Built with Next.js (MERN stack) — API Routes handle database interactions via Mongoose.
+-Supports user authentication, journal entries, mood tracking, and to-do lists.
+-Fully responsive and uses shadcn/ui components for a modern, consistent UI.
+-Deployed on Vercel with environment configuration for MongoDB Atlas.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+##  Usage
+
+1. Create account via "Login / Sign Up"
+2. Write journal entries with mood tracking
+3. Toggle light/dark mode using the theme button
+4. Manage tasks in the todo section
+
+##  Deployment
+
+Deployed on Vercel with automatic deployments from GitHub. MongoDB hosted on MongoDB Atlas.
+
+---
+
+Built with Next.js, TypeScript, and MongoDB by [@aastha-0110](https://github.com/aastha-0110)
