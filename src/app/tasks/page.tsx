@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import { useUser } from '@/components/providers/user-provider';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Plus, CalendarDays, Check } from 'lucide-react';
 import Link from 'next/link';
+import { BookOpen, ArrowLeft } from 'lucide-react';
 
 type Task = {
   _id: string;
@@ -178,7 +180,7 @@ export default function TasksPage() {
   >
     log in
   </Link>{' '}
-  to view your journal
+  to view your tasks
 </p>
 
 
@@ -188,8 +190,29 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
       {/* Header */}
+      <header className="border-b sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10">
+              <div className="container mx-auto flex h-16 items-center justify-between px-4">
+                <div className="flex items-center gap-4">
+                  <Link href="/">
+                    <Button variant="ghost" size="sm">
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Back
+                    </Button>
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-6 w-6" />
+                    <h1 className="text-xl font-bold">My Journal</h1>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  
+                  <ThemeToggle />
+                </div>
+              </div>
+            </header>
+      <main className="container mx-auto px-4 py-8">    
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your Tasks</h1>
@@ -220,7 +243,7 @@ export default function TasksPage() {
         <CardContent className="grid gap-3 md:grid-cols-2">
           <div className="md:col-span-2">
             <Input
-              placeholder="Task title (e.g., Write 3 journal lines)"
+              placeholder="Task title "
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') addTask(); }}
@@ -307,6 +330,7 @@ export default function TasksPage() {
           ))
         )}
       </div>
+      </main>  
     </div>
   );
 }
